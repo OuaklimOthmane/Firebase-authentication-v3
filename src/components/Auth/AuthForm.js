@@ -20,32 +20,42 @@ const AuthForm = () => {
 
     setIsLoading(true);
 
-    if (!isLogin) {
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBgyTdL0SDafMvM7_awazEjEuAWlPZ8iio",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: enteredEmail,
-            password: enteredPassword,
-            returnSecureToken: true,
-          }),
-          headers: { "Content-Type": "application/json" },
-        }
-      ).then((response) => {
+    let url;
+    if (isLogin) {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBgyTdL0SDafMvM7_awazEjEuAWlPZ8iio";
+    } else {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBgyTdL0SDafMvM7_awazEjEuAWlPZ8iio";
+    }
+
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        email: enteredEmail,
+        password: enteredPassword,
+        returnSecureToken: true,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
         setIsLoading(false);
+
         if (response.ok) {
-          // ....
+          return response.json();
         } else {
           response.json().then((data) => {
             const errorMessage =
               data?.error?.message || "Authentication failed !!";
-            alert(errorMessage);
-            console.log(data);
+
+            throw new Error(errorMessage);
           });
         }
+      })
+      .then((data) => console.log(data))
+      .catch((error) => {
+        alert(error.message);
       });
-    }
   };
 
   return (
