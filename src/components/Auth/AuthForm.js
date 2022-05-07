@@ -1,4 +1,5 @@
 import { useState, useRef, useContext } from "react";
+import { API_KEY, HEADERS, URL_SIGN_IN, URL_SIGN_UP } from "../../constants";
 import AuthContext from "../../store/auth-context";
 
 import classes from "./AuthForm.module.css";
@@ -24,11 +25,9 @@ const AuthForm = () => {
 
     let url;
     if (isLogin) {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBgyTdL0SDafMvM7_awazEjEuAWlPZ8iio";
+      url = `${URL_SIGN_IN}${API_KEY}`;
     } else {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBgyTdL0SDafMvM7_awazEjEuAWlPZ8iio";
+      url = `${URL_SIGN_UP}${API_KEY}`;
     }
 
     fetch(url, {
@@ -38,7 +37,7 @@ const AuthForm = () => {
         password: enteredPassword,
         returnSecureToken: true,
       }),
-      headers: { "Content-Type": "application/json" },
+      headers: HEADERS,
     })
       .then((response) => {
         setIsLoading(false);
