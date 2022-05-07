@@ -4,6 +4,7 @@ import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const enteredEmailRef = useRef();
   const enteredPasswordRef = useRef();
 
@@ -17,7 +18,9 @@ const AuthForm = () => {
     const enteredEmail = enteredEmailRef.current.value;
     const enteredPassword = enteredPasswordRef.current.value;
 
-    if (isLogin) {
+    setIsLoading(true);
+
+    if (!isLogin) {
       fetch(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBgyTdL0SDafMvM7_awazEjEuAWlPZ8iio",
         {
@@ -30,6 +33,7 @@ const AuthForm = () => {
           headers: { "Content-Type": "application/json" },
         }
       ).then((response) => {
+        setIsLoading(false);
         if (response.ok) {
           // ....
         } else {
@@ -62,7 +66,10 @@ const AuthForm = () => {
           />
         </div>
         <div className={classes.actions}>
-          <button>{isLogin ? "Login" : "Create Account"}</button>
+          {!isLoading && (
+            <button>{isLogin ? "Login" : "Create Account"}</button>
+          )}
+          {isLoading && <p>Sending request ...</p>}
           <button
             type="button"
             className={classes.toggle}
